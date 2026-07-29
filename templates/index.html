@@ -8,37 +8,59 @@
 <style>
 
 body {
-    font-family: Arial;
-    text-align:center;
-    margin-top:70px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 60px;
+}
+
+
+h1 {
+    font-size: 40px;
 }
 
 
 .parola {
 
-    font-size:60px;
-    margin:40px;
+    font-size: 60px;
+    margin: 50px;
+
+}
+
+
+.progresso {
+
+    font-size: 25px;
+    margin: 20px;
 
 }
 
 
 input {
 
-    font-size:25px;
-    padding:10px;
+    font-size: 25px;
+    padding: 10px;
 
 }
 
 
 button {
 
-    font-size:25px;
-    padding:10px 30px;
-    margin:10px;
+    font-size: 25px;
+    padding: 12px 35px;
+    margin: 10px;
+
+}
+
+
+.errore {
+
+    color: red;
+    font-size: 30px;
 
 }
 
 </style>
+
 
 </head>
 
@@ -50,14 +72,32 @@ button {
 
 
 
+
 {% if menu %}
+
+
+
+<h2>Scegli modalità</h2>
+
 
 
 <form action="/scheda" method="post">
 
 <button>
 
-Scheda
+Continua scheda
+
+</button>
+
+</form>
+
+
+
+<form action="/nuova_scheda" method="post">
+
+<button>
+
+Nuova scheda
 
 </button>
 
@@ -77,16 +117,20 @@ Ripasso
 
 
 
+
 {% else %}
 
 
 
-<h2>
+
+<div class="progresso">
 
 Progresso:
+
 {{ fatti }}/{{ totale }}
 
-</h2>
+</div>
+
 
 
 
@@ -102,31 +146,42 @@ Progresso:
 </div>
 
 
-<h3>
+
+<h2>
 
 {{ domanda.direzione }}
 
-</h3>
+</h2>
 
 
-<h3>
+
+<p>
+
+Tentativi corretti:
 
 {{ domanda.corrette }}
 
-</h3>
+</p>
+
+
 
 
 
 {% if errore %}
 
 
-<h2>
 
-❌ Soluzione:
+<div class="errore">
+
+❌ Risposta sbagliata
+
+<br><br>
+
+Soluzione:
 
 {{ errore }}
 
-</h2>
+</div>
 
 
 
@@ -142,7 +197,10 @@ Continua
 
 
 
+
 {% else %}
+
+
 
 
 
@@ -150,6 +208,8 @@ Continua
 
 
 <input
+
+type="text"
 
 name="risposta"
 
@@ -176,21 +236,41 @@ Controlla
 
 
 
+
+
 {% endif %}
+
+
 
 
 
 {% else %}
 
 
+
 <h2>
 
-Completata
+Scheda completata
 
 </h2>
 
 
+
+<form action="/" method="get">
+
+<button>
+
+Menu
+
+</button>
+
+</form>
+
+
+
 {% endif %}
+
+
 
 
 
