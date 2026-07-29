@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Deutsch Lernen</title>
+
+<style>
+
+body {
+    font-family: Arial;
+    text-align:center;
+    margin-top:70px;
+}
+
+
+.parola {
+
+    font-size:60px;
+    margin:40px;
+
+}
+
+
+input {
+
+    font-size:25px;
+    padding:10px;
+
+}
+
+
+button {
+
+    font-size:25px;
+    padding:10px 30px;
+    margin:10px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>Deutsch Lernen</h1>
+
+
+
+{% if menu %}
+
+
+<form action="/scheda" method="post">
+
+<button>
+
+Scheda
+
+</button>
+
+</form>
+
+
+
+<form action="/ripasso" method="post">
+
+<button>
+
+Ripasso
+
+</button>
+
+</form>
+
+
+
+{% else %}
+
+
+
+<h2>
+
+Progresso:
+{{ fatti }}/{{ totale }}
+
+</h2>
+
+
+
+
+{% if domanda %}
+
+
+
+<div class="parola">
+
+{{ domanda.domanda }}
+
+</div>
+
+
+<h3>
+
+{{ domanda.direzione }}
+
+</h3>
+
+
+<h3>
+
+{{ domanda.corrette }}
+
+</h3>
+
+
+
+{% if errore %}
+
+
+<h2>
+
+❌ Soluzione:
+
+{{ errore }}
+
+</h2>
+
+
+
+<form action="/continua" method="post">
+
+<button autofocus>
+
+Continua
+
+</button>
+
+</form>
+
+
+
+{% else %}
+
+
+
+<form action="/risposta" method="post">
+
+
+<input
+
+name="risposta"
+
+autocomplete="off"
+
+autofocus
+
+required
+
+>
+
+
+<br>
+
+
+<button>
+
+Controlla
+
+</button>
+
+
+</form>
+
+
+
+{% endif %}
+
+
+
+{% else %}
+
+
+<h2>
+
+Completata
+
+</h2>
+
+
+{% endif %}
+
+
+
+{% endif %}
+
+
+
+</body>
+
+</html>
