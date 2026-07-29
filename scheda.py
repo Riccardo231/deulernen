@@ -5,6 +5,14 @@ from database import connessione
 modalita = "scheda"
 
 
+def limite_tentativi():
+    if modalita == "scheda":
+        return 10
+    else:
+        return 2
+
+
+
 def crea_scheda():
 
     conn = connessione()
@@ -28,12 +36,10 @@ def crea_scheda():
 
     parole = cur.fetchall()
 
-
     dati = [
         (p[0], 0, 0)
         for p in parole
     ]
-
 
     cur.executemany("""
     INSERT INTO scheda_attiva
@@ -43,9 +49,7 @@ def crea_scheda():
         it_de
     )
     VALUES (%s,%s,%s)
-    """,
-    dati)
-
+    """, dati)
 
     conn.commit()
 
@@ -59,26 +63,21 @@ def crea_ripasso():
     conn = connessione()
     cur = conn.cursor()
 
-
     cur.execute("""
     DELETE FROM scheda_attiva
     """)
-
 
     cur.execute("""
     SELECT parola_id
     FROM indici
     """)
 
-
     parole = cur.fetchall()
-
 
     dati = [
         (p[0],0,0)
         for p in parole
     ]
-
 
     cur.executemany("""
     INSERT INTO scheda_attiva
@@ -88,9 +87,7 @@ def crea_ripasso():
         it_de
     )
     VALUES (%s,%s,%s)
-    """,
-    dati)
-
+    """, dati)
 
     conn.commit()
 
@@ -101,13 +98,41 @@ def crea_ripasso():
 
 
 
+def scheda_in_corso():
+
+    conn = connessione()
+    cur = conn.cursor()
+
+    limite = limite_tentativi()
+
+    cur.execute("""
+    SELECT COUNT(*)
+    FROM scheda_attiva
+    WHERE de_it < %s
+       OR it_de < %s
+    """,
+    (
+        limite,
+        limite
+    ))
+
+    n = cur.fetchone()[0]
+
+    cur.close()
+    conn.close()
+
+    return n > 0
+
+
+
+
+
 def prossima_parola():
 
     conn = connessione()
     cur = conn.cursor()
 
-
-    limite = 10 if modalita == "scheda" else 2
+    limite = limite_tentativi()
 
 
     cur.execute("""
@@ -122,7 +147,6 @@ def prossima_parola():
     FROM scheda_attiva s
 
     JOIN parole p
-
     ON p.id = s.parola_id
 
 
@@ -154,10 +178,8 @@ def prossima_parola():
 
     direzioni = []
 
-
     if r[3] < limite:
         direzioni.append("DE → IT")
-
 
     if r[4] < limite:
         direzioni.append("IT → DE")
@@ -180,26 +202,21 @@ def prossima_parola():
         }
 
 
-    else:
+    return {
 
-        return {
+        "parola_id": r[0],
+        "domanda": r[2],
+        "risposta": r[1],
+        "direzione": direzione,
+        "corrette": r[4]
 
-            "parola_id": r[0],
-            "domanda": r[2],
-            "risposta": r[1],
-            "direzione": direzione,
-            "corrette": r[4]
-
-        }
+    }
 
 
 
 
 
-def aggiorna_risposta(
-        parola_id,
-        direzione):
-
+def aggiorna_risposta(parola_id, direzione):
 
     conn = connessione()
     cur = conn.cursor()
@@ -245,18 +262,16 @@ def progresso():
 
 
     cur.execute("""
-    SELECT COALESCE(SUM(de_it+it_de),0)
+    SELECT COALESCE(SUM(de_it + it_de),0)
     FROM scheda_attiva
     """)
-
 
     fatti = cur.fetchone()[0]
 
 
     if modalita == "scheda":
 
-        totale = 200 * 10 * 2
-
+        totale = 4000
 
     else:
 
@@ -267,7 +282,7 @@ def progresso():
 
         n = cur.fetchone()[0]
 
-        totale = n * 2 * 2
+        totale = n * 4
 
 
     cur.close()
