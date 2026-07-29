@@ -33,8 +33,31 @@ def home(request: Request):
 
 
 
+# CONTINUA LA SCHEDA ESISTENTE
+
 @app.post("/scheda")
 def avvia_scheda():
+
+    global parola_corrente
+
+    scheda.modalita = "scheda"
+
+    parola_corrente = None
+
+
+    return RedirectResponse(
+        "/gioco",
+        status_code=303
+    )
+
+
+
+
+
+# CREA UNA NUOVA SCHEDA DA ZERO
+
+@app.post("/nuova_scheda")
+def nuova_scheda():
 
     global parola_corrente
 
@@ -54,6 +77,7 @@ def avvia_scheda():
 
 
 
+# CREA RIPASSO
 
 @app.post("/ripasso")
 def avvia_ripasso():
@@ -71,7 +95,6 @@ def avvia_ripasso():
         "/gioco",
         status_code=303
     )
-
 
 
 
@@ -122,6 +145,7 @@ def risposta(
 
     global parola_corrente
     global errore
+
 
 
     if risposta.strip().lower() == parola_corrente["risposta"].lower():
