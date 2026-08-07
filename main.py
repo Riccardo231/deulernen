@@ -33,8 +33,6 @@ def home(request: Request):
 
 
 
-# CONTINUA LA SCHEDA ESISTENTE
-
 @app.post("/scheda")
 def avvia_scheda():
 
@@ -53,8 +51,6 @@ def avvia_scheda():
 
 
 
-
-# CREA UNA NUOVA SCHEDA DA ZERO
 
 @app.post("/nuova_scheda")
 def nuova_scheda():
@@ -77,16 +73,19 @@ def nuova_scheda():
 
 
 
-# CREA RIPASSO
-
 @app.post("/ripasso")
 def avvia_ripasso():
 
     global parola_corrente
 
+
     scheda.modalita = "ripasso"
 
-    scheda.crea_ripasso()
+
+    if not scheda.ripasso_in_corso():
+
+        scheda.crea_ripasso()
+
 
     parola_corrente = None
 
@@ -138,9 +137,10 @@ def gioco(request: Request):
 
 
 
+
 @app.post("/risposta")
 def risposta(
-        risposta: str = Form(...)
+    risposta: str = Form(...)
 ):
 
     global parola_corrente
@@ -159,6 +159,7 @@ def risposta(
 
         parola_corrente = None
         errore = None
+
 
 
     else:
